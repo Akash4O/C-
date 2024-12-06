@@ -11,39 +11,112 @@
 #include<fstream>
 #include<cstdlib>
 #include<cstring>
-
+#include<iomanip>
+#include<math.h>
 using namespace std;
 
-struct Product {
-    int productId;
-    string name;
-    string category;
-};
+// Function to clear screen based on OS
+    void clearScreen() {
+        #ifdef _WIN32
+            system("cls"); // Clear screen on Windows
+        #else
+            system("clear"); // Clear screen on Linux/macOS
+        #endif
+    }
 
-struct Order {
-    int orderId;
-    int productId;
-    int quantity;
-    string customerID;
-    time_t orderDate;
-};
+class Overall{
+    private:
 
-struct Customers {
-    string customerId;
-    string customerName;
+        struct Product {
+            int productId;
+            string name;
+            string category;
+            float price;
+        };
+
+        
+
+        vector<Product> products = {
+        {101, "Laptop", "Electronics",54999},
+        {102, "SmartPhone", "Electronics",24999},
+        {103, "CoffeeMaker", "Kitchen",14999},
+        {104, "Blender", "Kitchen",15999},
+        {105, "Desk Lamp", "Home",799}
+        };
+
+        // Product stock map
+        map<int, int> productStock = {
+            {101, 10},
+            {102, 5},
+            {103, 6},
+            {104, 18},
+            {105, 4}
+        };
+
+    public:
+        int countDigit(int n) { return floor(log10(n) + 1); }
+
+        void viewProducts(){
+            cout<<"ProductId        Product Name                Category            Price           Stock           "<<endl;
+            for (const auto& product : products) {
+            // Calculate dynamic width for productId and name
+                int productIdWidth = 17 - countDigit(product.productId);
+                int nameWidth = 28 - product.name.length();
+                int categoryWidth = 20 - product.category.length();
+                int priceWidth = 16 - countDigit(product.price);
+                int stockWidth = countDigit(productStock[product.productId]);
+                
+                // Output product details with dynamic spaces
+                cout << product.productId;
+                cout << setw(productIdWidth) << "";  // This will print the space
+                cout << product.name;
+                cout << setw(nameWidth) << "";  // This will print the space
+                cout << product.category;
+                cout << setw(categoryWidth) << "";
+                cout << product.price;
+                cout << setw(priceWidth) << "";
+                cout << productStock[product.productId] << "";
+                cout << setw(stockWidth) << "";
+                cout << endl;
+            }
+
+            cout<< ""
+        }
+
+        void overallSession(){
+            while(true){
+                clearScreen();
+                cout << "Choose One From Below Options: " << endl;
+                cout << "1. User Profile" << endl;
+                cout << "2. View Products"<<endl;
+                cout << "3. Logout"<<endl;
+                cout << "Enter your choice : " << endl;
+                int ch;
+                cin >> ch;
+                switch (ch)
+                {
+                case 1:
+                    break;
+                
+                case 2:
+                    viewProducts();
+                    break;
+                
+                case 3:
+                    cout<<"Bye 👋 Have A Nice Day!"<<endl;
+                    return;
+
+                default:
+                    cout<<"invalid Choice"<<endl;
+                    break;
+                }
+            }
+        }
+
 };
 
 class Auth {
 public:
-    // Function to clear screen based on OS
-    void clearScreen() {
-#ifdef _WIN32
-        system("cls"); // Clear screen on Windows
-#else
-        system("clear"); // Clear screen on Linux/macOS
-#endif
-    }
-
     // Function to create a new account
     void createAccount() {
         string username, userpassword;
@@ -82,17 +155,18 @@ public:
         string username, userpassword;
         cout << "Enter the UserName : ";
         cin >> username;
-        cout << "Enter the Password : ";
-        cin >> userpassword;
+        
 
         bool userflag = false;
 
         if (inFile.is_open()) {
             while (getline(inFile, line)) {
                 data = split(line);
-                if (strcmp(data.first.c_str(), username.c_str()) == 0) {
+                if (data.first == username) {
+                    cout << "Enter the Password : ";
+                    cin >> userpassword;
                     userflag = true;
-                    if (strcmp(data.second.c_str(), userpassword.c_str()) == 0) {
+                    if (data.second == userpassword) {
                         cout << "Successfully Logged In" << endl;
                         cout << "Welcome " << username << " !" << endl;
                         return;
@@ -106,22 +180,28 @@ public:
 
         if (userflag) {
             cout << "Incorrect Password!" << endl;
+            Login();
         } else {
             cout << "Invalid UserName Or User Doesn't Exist" << endl;
+            Login();
         }
     }
 
     // Function to manage login session
     void loginSession() {
         int ch;
-        cout << "Choose From Below Options : " << endl;
-        cout << "1. Login \n2. Register \n3. Exit" << endl;
+        Overall a;
+        cout << "Choose One From Below Options: " << endl;
+        cout << "1. Login" << endl;
+        cout << "2. Register"<<endl;
+        cout << "3. Exit"<<endl;
         cout << "Enter your choice : " << endl;
         cin >> ch;
         switch (ch) {
         case 1:
             clearScreen();
             Login();
+            a.overallSession();
             break;
         case 2:
             clearScreen();
@@ -138,65 +218,31 @@ public:
     }
 };
 
+struct Order {
+    int orderId;
+    int productId;
+    int quantity;
+    string customerID;
+    time_t orderDate;
+};
+
 int main() {
-    // Product list
-    vector<Product> products = {
-        {101, "Laptop", "Electronics"},
-        {102, "SmartPhone", "Electronics"},
-        {103, "CoffeeMaker", "Kitchen"},
-        {104, "Blender", "Kitchen"},
-        {105, "Desk Lamp", "Home"}
-    };
 
-    // Recent customers list
-    deque<Customers> recentCustomers = {
-        {"C001", "Customer1"},
-        {"C002", "Customer2"},
-        {"C003", "Customer3"}
-    };
-
-    recentCustomers.push_back({"C004", "Customer4"});
+    set<string> categories;
+    // for (const auto& product : products) {
+    //     categories.insert(product.category);
+    // }
 
     // Order history list
-    list<Order> orderHistory;
-    orderHistory.push_back({1, 101, 1, "C001", time(0)});
-    orderHistory.push_back({2, 102, 2, "C003", time(0)});
-    orderHistory.push_back({3, 103, 3, "C002", time(0)});
-
-    // Categories set
-    set<string> categories;
-    for (const auto& product : products) {
-        categories.insert(product.category);
-    }
-
-    // Product stock map
-    map<int, int> productStock = {
-        {101, 10},
-        {102, 5},
-        {103, 6},
-        {104, 18},
-        {105, 4}
-    };
+    list<Order> orderHistory ={
+    {1, 101, 1, "C001", time(0)},
+    {2, 102, 2, "C003", time(0)},
+    {3, 103, 3, "C002", time(0)}};
 
     // Customer orders multi-map
     multimap<string, Order> customerOrders;
     for (const auto& order : orderHistory) {
         customerOrders.insert({order.customerID, order});
-    }
-
-    // Customer data unordered map
-    unordered_map<string, string> customerData = {
-        {"C001", "Alice"},
-        {"C002", "Bob"},
-        {"C003", "Akash"},
-        {"C004", "Anand"},
-        {"C005", "Max"}
-    };
-
-    // Unique product IDs unordered set
-    unordered_set<int> uniqueProductIDs;
-    for (const auto& product : products) {
-        uniqueProductIDs.insert(product.productId);
     }
 
     // Authentication object to manage login and account creation
