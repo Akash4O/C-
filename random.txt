@@ -1,0 +1,5 @@
+
+        cout<<"*********************************************************************************************************"<<endl;
+        cout<<"     Welcome     %s      To      The     CartRaja     Online      Store      ",
+        cout<<"ProductID                    Product Name                            Price                       Stock   "<<endl;
+    
