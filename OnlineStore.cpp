@@ -28,8 +28,15 @@ using namespace std;
 
 class Cart{
     private:
+
+    public:
+        void addToCart(){
+
+        }
+
+
         
-}
+};
 
 class Overall{
     private:
@@ -383,17 +390,7 @@ int main() {
 
     
 
-    // Order history list
-    list<Order> orderHistory ={
-    {1, 101, 1, "C001", time(0)},
-    {2, 102, 2, "C003", time(0)},
-    {3, 103, 3, "C002", time(0)}};
-
-    // Customer orders multi-map
-    multimap<string, Order> customerOrders;
-    for (const auto& order : orderHistory) {
-        customerOrders.insert({order.customerID, order});
-    }
+    
 
     // Authentication object to manage login and account creation
     Auth auth;
