@@ -26,6 +26,11 @@ using namespace std;
         #endif
     }
 
+class Cart{
+    private:
+        
+}
+
 class Overall{
     private:
 
@@ -60,13 +65,14 @@ class Overall{
         int countDigit(int n) { return floor(log10(n) + 1); }
 
         void filterProducts(){
+            clearScreen();
             cout<<"Choose A Catrgories : "<<endl;
             set<string> categories;
             for (const auto& product : products) {
                 categories.insert(product.category);
             }
             
-            int i=0;
+            int i=1;
             for (auto it = categories.begin(); it != categories.end(); ++it, ++i) {
                 cout<< i <<". "<<*it<<endl;
             }
@@ -75,7 +81,7 @@ class Overall{
             int ch;
             cin>>ch;
 
-            i=0;
+            i=1;
             string targetCategory;
             for (auto it = categories.begin(); it != categories.end(); ++it, ++i) {
                 if(i==ch){
@@ -93,8 +99,80 @@ class Overall{
             
         }
 
-        void searchProducts(){
+        void searchProductById(int id){
+            for(const auto& product : products){
+                if(id == product.productId){
+                    printProductsDescription(product);
+                    return;
+                }
+            }
+            cout<<"Invalid Entry!"<<endl;
+        }
 
+        bool compareStrings(string& str1, string& str2)
+        {
+            if (str1.length() != str2.length())
+                return false;
+
+            for (int i = 0; i < str1.length(); ++i) {
+                if (tolower(str1[i]) != tolower(str2[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+
+        void searchProductByName(string pname){
+            string p2;
+            for(const auto& product : products){
+                p2 = product.name;
+                if(compareStrings(p2,pname)){
+                    printProductsDescription(product);
+                    return;
+                }
+            }
+            cout<<"Invalid Entry!"<<endl;
+        }
+
+        void searchProducts(){
+            cout<<"Choose One Option :"<<endl;
+            cout<<"1. Search By Id"<<endl;
+            cout<<"2. Search By Name"<<endl;
+            cout<<"Enter your choice :"<<endl;
+            int ch;
+            string pname;
+            cin>>ch;
+            switch (ch)
+            {
+            case 1:
+                cout<<"Enter the id of the product :";
+                int id;
+                cin >> id;
+                searchProductById(id);
+                break;
+            case 2:
+                cout<<"Enter the Name of the product :";
+                
+                cin>>pname;
+                searchProductByName(pname);
+                break;
+            default:
+                cout<<"Invalid Choice !"<<endl;
+                break;
+            }
+
+        }
+
+        void printProductsDescription(Product product){
+            cout<<""<<endl;
+            cout<<"Product Details :"<<endl;
+            cout<<"Product ID : "<<product.productId<<endl;
+            cout<<"Product Name : "<<product.name<<endl;
+            cout<<"Product Category : "<<product.category<<endl;
+            cout<<"Product Price : "<<product.price<<endl;
+            cout<<"Product Stock : "<<productStock[product.productId]<<endl;
+            cout<<""<<endl;
         }
 
         void printProducts(Product product){
@@ -131,7 +209,8 @@ class Overall{
                 cout<<"Choose one From Below Options: " <<endl;
                 cout<<"1. Filter Products by Category"<<endl;
                 cout<<"2. Search Product"<<endl;
-                cout<<"3. Go Back to Main Page"<<endl;
+                cout<<"3. Add Product to cart."<<endl;
+                cout<<"4. Go Back to Main Page"<<endl;
                 cout<<"Enter your choice :"<<endl;
                 int ch;
                 cin >> ch;
@@ -144,6 +223,8 @@ class Overall{
                     searchProducts();
                     break;
                 case 3:
+                    break;
+                case 4:
                     return;
                 default:
                     break;
@@ -281,7 +362,7 @@ public:
             case 3:
                 clearScreen();
                 cout << "Exiting...";
-                break;
+                return;
             default:
                 cout << "Invalid input!" << endl;
                 break;
