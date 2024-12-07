@@ -12,6 +12,8 @@
 #include<cstdlib>
 #include<cstring>
 #include<iomanip>
+#include<thread>
+#include<chrono>
 #include<math.h>
 using namespace std;
 
@@ -32,16 +34,17 @@ class Overall{
             string name;
             string category;
             float price;
+            string description;
         };
 
         
 
         vector<Product> products = {
-        {101, "Laptop", "Electronics",54999},
-        {102, "SmartPhone", "Electronics",24999},
-        {103, "CoffeeMaker", "Kitchen",14999},
-        {104, "Blender", "Kitchen",15999},
-        {105, "Desk Lamp", "Home",799}
+        {101, "Laptop", "Electronics",54999,"A high-performance laptop, perfect for work, entertainment, and gaming. It features advanced processing power and ample storage for all your needs"},
+        {102, "SmartPhone", "Electronics",24999,"A sleek and powerful smartphone with cutting-edge features, including a stunning display, high-resolution cameras, and long-lasting battery life."},
+        {103, "CoffeeMaker", "Kitchen",14999,"A premium coffee maker that brews café-quality coffee right at home. Its user-friendly design ensures every cup is a delight."},
+        {104, "Blender", "Kitchen",15999,"A versatile kitchen blender with multiple speed settings, perfect for smoothies, soups, and more. Designed for durability and ease of use."},
+        {105, "Desk Lamp", "Home",799,"A stylish and energy-efficient desk lamp, ideal for study or work. It features adjustable brightness and a sleek design to enhance your workspace."}
         };
 
         // Product stock map
@@ -56,31 +59,97 @@ class Overall{
     public:
         int countDigit(int n) { return floor(log10(n) + 1); }
 
-        void viewProducts(){
-            cout<<"ProductId        Product Name                Category            Price           Stock           "<<endl;
+        void filterProducts(){
+            cout<<"Choose A Catrgories : "<<endl;
+            set<string> categories;
             for (const auto& product : products) {
-            // Calculate dynamic width for productId and name
-                int productIdWidth = 17 - countDigit(product.productId);
-                int nameWidth = 28 - product.name.length();
-                int categoryWidth = 20 - product.category.length();
-                int priceWidth = 16 - countDigit(product.price);
-                int stockWidth = countDigit(productStock[product.productId]);
-                
-                // Output product details with dynamic spaces
-                cout << product.productId;
-                cout << setw(productIdWidth) << "";  // This will print the space
-                cout << product.name;
-                cout << setw(nameWidth) << "";  // This will print the space
-                cout << product.category;
-                cout << setw(categoryWidth) << "";
-                cout << product.price;
-                cout << setw(priceWidth) << "";
-                cout << productStock[product.productId] << "";
-                cout << setw(stockWidth) << "";
-                cout << endl;
+                categories.insert(product.category);
+            }
+            
+            int i=0;
+            for (auto it = categories.begin(); it != categories.end(); ++it, ++i) {
+                cout<< i <<". "<<*it<<endl;
             }
 
-            cout<< ""
+            cout<<"Enter your Choice :"<<endl;
+            int ch;
+            cin>>ch;
+
+            i=0;
+            string targetCategory;
+            for (auto it = categories.begin(); it != categories.end(); ++it, ++i) {
+                if(i==ch){
+                    targetCategory=*it;
+                    break;
+                }
+            }
+
+            cout<<"ProductId        Product Name                Category            Price           Stock           "<<endl;
+            for(const auto& product : products){
+                if(targetCategory==product.category){
+                    printProducts(product);
+                }
+            }
+            
+        }
+
+        void searchProducts(){
+
+        }
+
+        void printProducts(Product product){
+            
+            // Calculate dynamic width for productId and name
+            int productIdWidth = 17 - countDigit(product.productId);
+            int nameWidth = 28 - product.name.length();
+            int categoryWidth = 20 - product.category.length();
+            int priceWidth = 16 - countDigit(product.price);
+            int stockWidth = countDigit(productStock[product.productId]);
+                
+            // Output product details with dynamic spaces
+            cout << product.productId;
+            cout << setw(productIdWidth) << "";  // This will print the space
+            cout << product.name;
+            cout << setw(nameWidth) << "";  // This will print the space
+            cout << product.category;
+            cout << setw(categoryWidth) << "";
+            cout << product.price;
+            cout << setw(priceWidth) << "";
+            cout << productStock[product.productId] << "";
+            cout << setw(stockWidth) << "";
+            cout << endl;
+            
+        }
+
+        void viewProducts(){
+            cout<<"ProductId        Product Name                Category            Price           Stock           "<<endl;
+            for(const auto& product : products){
+                printProducts(product);
+            }
+
+            while(true){
+                cout<<"Choose one From Below Options: " <<endl;
+                cout<<"1. Filter Products by Category"<<endl;
+                cout<<"2. Search Product"<<endl;
+                cout<<"3. Go Back to Main Page"<<endl;
+                cout<<"Enter your choice :"<<endl;
+                int ch;
+                cin >> ch;
+                switch (ch)
+                {
+                case 1:
+                    filterProducts();
+                    break;
+                case 2:
+                    searchProducts();
+                    break;
+                case 3:
+                    return;
+                default:
+                    break;
+                }
+            }
+
         }
 
         void overallSession(){
@@ -189,31 +258,34 @@ public:
 
     // Function to manage login session
     void loginSession() {
-        int ch;
-        Overall a;
-        cout << "Choose One From Below Options: " << endl;
-        cout << "1. Login" << endl;
-        cout << "2. Register"<<endl;
-        cout << "3. Exit"<<endl;
-        cout << "Enter your choice : " << endl;
-        cin >> ch;
-        switch (ch) {
-        case 1:
-            clearScreen();
-            Login();
-            a.overallSession();
-            break;
-        case 2:
-            clearScreen();
-            createAccount();
-            break;
-        case 3:
-            clearScreen();
-            cout << "Exiting...";
-            break;
-        default:
-            cout << "Invalid input!" << endl;
-            break;
+        while(true){
+            int ch;
+            Overall a;
+            cout << "Choose One From Below Options: " << endl;
+            cout << "1. Login" << endl;
+            cout << "2. Register"<<endl;
+            cout << "3. Exit"<<endl;
+            cout << "Enter your choice : " << endl;
+            cin >> ch;
+            switch (ch) {
+            case 1:
+                clearScreen();
+                Login();
+                this_thread::sleep_for(chrono::seconds(3));
+                a.overallSession();
+                break;
+            case 2:
+                clearScreen();
+                createAccount();
+                break;
+            case 3:
+                clearScreen();
+                cout << "Exiting...";
+                break;
+            default:
+                cout << "Invalid input!" << endl;
+                break;
+            }
         }
     }
 };
@@ -228,10 +300,7 @@ struct Order {
 
 int main() {
 
-    set<string> categories;
-    // for (const auto& product : products) {
-    //     categories.insert(product.category);
-    // }
+    
 
     // Order history list
     list<Order> orderHistory ={
